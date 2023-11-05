@@ -9,13 +9,21 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-navigation/bottom-tabs": "^6.5.11",
+    "@react-navigation/native-stack": "^6.9.17",
     "expo": "~49.0.15",
+    "expo-image-picker": "^14.5.0",
+    "expo-media-library": "^15.6.0",
     "expo-status-bar": "~1.6.0",
     "react": "18.2.0",
-    "react-native": "0.72.6"
+    "react-native": "0.72.6",
+    "react-native-gesture-handler": "^2.13.4",
+    "react-native-reanimated": "^3.5.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
+    "@types/react": "^18.2.35"
   },
   "private": true
 }
