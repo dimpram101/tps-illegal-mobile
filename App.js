@@ -1,35 +1,20 @@
 import * as React from 'react';
-import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-function HomeScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home!</Text>
-    </View>
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
-    </View>
-  );
-}
-
-const Tab = createBottomTabNavigator();
+import StackNavigator from './src/routes/stacks/StackNavigator';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { AuthProvider } from './src/contexts/AuthContext';
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name="TPS" component={HomeScreen} options={{
-          tabBarBadge: 3,
-        }}/>
-        <Tab.Screen name="Profile" component={SettingsScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <SafeAreaView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <AuthProvider>
+          <StackNavigator />
+          {/* <TabsNavigator /> */}
+          <StatusBar style="auto" />
+        </AuthProvider>
+      </NavigationContainer>
+    </SafeAreaView>
   );
 }
