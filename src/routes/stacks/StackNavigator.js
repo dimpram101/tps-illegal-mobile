@@ -11,7 +11,11 @@ const StackNavigator = () => {
   const { authState } = useAuth();
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{
+      contentStyle: {
+        backgroundColor: '#2FC8B0'
+      }
+    }}>
       {!authState.authenticated ? (
         <React.Fragment>
           <Stack.Screen name="Login" component={Login} options={{ headerShown: false, }} />

@@ -26,7 +26,7 @@ const ProfileIndex = ({ navigation }) => {
           <Ionicons name="chevron-forward-outline" size={20} color="grey" />
         </Pressable>
         <Pressable style={styles.opsiItem} onPress={() => navigation.navigate("TPS")}>
-          <Text style={{ fontSize: 16 }}>Riwayat Relawan</Text>
+          <Text style={{ fontSize: 16 }}>Riwayat Volunteer</Text>
           <Ionicons name="chevron-forward-outline" size={20} color="grey" />
         </Pressable>
         <Pressable style={styles.opsiItem}>

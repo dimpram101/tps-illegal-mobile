@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
     token: null,
     authenticated: false
   });
-
+  console.log(authState)
   const login = (email, password) => {
     setAuthState({
       token: 'token',
