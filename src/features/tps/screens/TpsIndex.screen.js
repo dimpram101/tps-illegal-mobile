@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Dimensions, Text, View } from "react-native";
+import { ActivityIndicator, Dimensions, Text, View } from "react-native";
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
 import Carousel from "react-native-reanimated-carousel";
@@ -25,7 +25,7 @@ const TpsIndex = () => {
   if (!location) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>TpsIndex</Text>
+        <ActivityIndicator color="#2FC8B0" size="large" />
       </View>
     );
   }
@@ -50,7 +50,7 @@ const TpsIndex = () => {
       <View
         style={{
           position: "absolute",
-          bottom: WIDTH / 2 - 4,
+          bottom: WIDTH / 1.8 - 4,
           zIndex: 10,
           paddingHorizontal: 20,
           justifyContent: "center",
@@ -79,7 +79,7 @@ const TpsIndex = () => {
         <Carousel
           ref={carouselRef}
           width={WIDTH}
-          height={WIDTH / 2}
+          height={WIDTH / 1.8}
           pagingEnabled
           snapEnabled
           loop={false}
