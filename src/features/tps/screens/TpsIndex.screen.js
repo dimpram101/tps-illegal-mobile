@@ -1,5 +1,11 @@
 import React, { useRef } from "react";
-import { ActivityIndicator, Dimensions, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  Text,
+  View,
+  ScrollView,
+} from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import Carousel from "react-native-reanimated-carousel";
@@ -33,7 +39,7 @@ const TpsIndex = () => {
   console.log(location);
 
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView contentContainerStyle={{ flex: 1 }}>
       <MapView
         style={{ width: "100%", height: "100%" }}
         provider={PROVIDER_GOOGLE}
@@ -134,7 +140,7 @@ const TpsIndex = () => {
           )}
         />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
