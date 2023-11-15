@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { ActivityIndicator, Dimensions, Text, View } from "react-native";
-import MapView from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import Carousel from "react-native-reanimated-carousel";
 import { Button, Paragraph } from "react-native-paper";
@@ -36,7 +36,7 @@ const TpsIndex = () => {
     <View style={{ flex: 1 }}>
       <MapView
         style={{ width: "100%", height: "100%" }}
-        provider="google"
+        provider={PROVIDER_GOOGLE}
         initialRegion={{
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
@@ -110,13 +110,14 @@ const TpsIndex = () => {
                 <Text
                   style={{ textAlign: "left", fontSize: 17, fontWeight: 500 }}
                 >
-                  Jalan Pahlawan No. 1 Bukit Biru, Timbau, Kec. Tenggarong, Kabupaten Kutai Kartanegara
+                  Jalan Pahlawan No. 1 Bukit Biru, Timbau, Kec. Tenggarong,
+                  Kabupaten Kutai Kartanegara {index}
                 </Text>
-                <Paragraph style={{fontWeight: 400}}>
-                  Terdapat 1 TPS Ilegal di lokasi ini. TPS ini sudah bertumpuk sampah dan mengganggu lingkungan sekitar.
+                <Paragraph style={{ fontWeight: 400 }}>
+                  Terdapat 1 TPS Ilegal di lokasi ini. TPS ini sudah bertumpuk
+                  sampah dan mengganggu lingkungan sekitar.
                 </Paragraph>
               </View>
-              {/* <Button title="lihat Detail" /> */}
               <Button
                 mode="contained"
                 style={{
