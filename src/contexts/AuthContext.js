@@ -16,14 +16,19 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await api.post("/auth/login", { email, password });
-      console.log(res.data);
+      // const res = await api.post("/auth/login", { email, password });
+      // console.log(res.data);
 
       setAuthState({
-        userId: res.data.data.user.id,
-        token: res.data.data.token,
+        userId: 5,
+        token: "token",
         authenticated: true,
       });
+      // setAuthState({
+      //   userId: res.data.data.user.id,
+      //   token: res.data.data.token,
+      //   authenticated: true,
+      // });
     } catch (error) {
       console.log(error.response.data);
     }

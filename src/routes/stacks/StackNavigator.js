@@ -4,6 +4,7 @@ import TabsNavigator from '../tabs/TabsNavigator';
 import { useAuth } from '../../contexts/AuthContext';
 import Login from '../../features/auth/Login';
 import Register from '../../features/auth/Register';
+import AddTps from '../../features/tps/screens/AddTps';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,7 +14,7 @@ const StackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{
       contentStyle: {
-        backgroundColor: '#2FC8B0'
+        backgroundColor: !authState.authenticated ? '#2FC8B0' : '#FFFFFF'
       }
     }}>
       {!authState.authenticated ? (
@@ -22,7 +23,10 @@ const StackNavigator = () => {
           <Stack.Screen name="Register" component={Register} options={{ headerShown: false, }} />
         </React.Fragment>
       ) : (
-        <Stack.Screen name="Tabs" component={TabsNavigator} options={{ headerShown: false, }} />
+        <React.Fragment>
+          <Stack.Screen name="Tabs" component={TabsNavigator} options={{ headerShown: false, }} />
+          <Stack.Screen name="AddTps" component={AddTps} options={{ headerShown: true, headerTitle: "Tambahkan Data TPS Ilegal" }} />
+        </React.Fragment>
       )}
     </Stack.Navigator>
   )

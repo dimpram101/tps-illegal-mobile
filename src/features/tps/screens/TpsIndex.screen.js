@@ -6,33 +6,38 @@ import {
   View,
   ScrollView,
 } from "react-native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import Carousel from "react-native-reanimated-carousel";
 import { Button, Paragraph } from "react-native-paper";
 
-const gap = 1;
 const WIDTH = Dimensions.get("window").width;
 
-const TpsIndex = () => {
+const TpsIndex = ({ navigation }) => {
   const [location, setLocation] = React.useState(null);
   const carouselRef = useRef(null);
+  const [pin, setPin] = React.useState({
+    latitude: -1.145265,
+    longitude: 116.880085,
+  });
 
   React.useEffect(() => {
-    (async () => {
+    const getLocation = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
         const location = await Location.getCurrentPositionAsync({});
         setLocation(location);
       }
-    })();
+    };
+
+    getLocation();;
   }, []);
 
   if (!location) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <ScrollView contentContainerStyle={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator color="#2FC8B0" size="large" />
-      </View>
+      </ScrollView>
     );
   }
 
@@ -51,7 +56,15 @@ const TpsIndex = () => {
         }}
         mapType="standard"
         showsUserLocation={true}
-      />
+      >
+        <Marker
+          draggable
+          coordinate={pin}
+          onDragEnd={(e) => {
+            setPin(e.nativeEvent.coordinate);
+          }}
+        />
+      </MapView>
 
       <View
         style={{
@@ -67,6 +80,7 @@ const TpsIndex = () => {
         <Button
           mode="contained"
           style={{ backgroundColor: "#2FC8B0", width: "100%" }}
+          onPress={() => navigation.navigate("AddTps")}
         >
           Tambah Titik TPS Ilegal
         </Button>
