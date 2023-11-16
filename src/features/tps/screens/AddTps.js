@@ -12,6 +12,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Button } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import api from "../../../api/api";
+import { useTPS } from "../../../contexts/TPSContext";
 
 const AddTps = ({ navigation }) => {
   const [selectedImages, setSelectedImages] = React.useState([]);
@@ -22,6 +23,11 @@ const AddTps = ({ navigation }) => {
   const [address, setAddress] = React.useState("");
   const [notes, setNotes] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
+  const { hasSentData, setHasSentData } = useTPS();
+
+  React.useEffect(() => {
+    setHasSentData(false);
+  }, [])
 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -67,6 +73,7 @@ const AddTps = ({ navigation }) => {
       .then((res) => {
         console.log(res.data);
         navigation.goBack("Tabs");
+        setHasSentData(true);
       })
       .catch((err) => console.log(err.response.data))
       .finally(() => setIsLoading(false));

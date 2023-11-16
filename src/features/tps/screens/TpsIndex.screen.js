@@ -12,6 +12,7 @@ import Carousel from "react-native-reanimated-carousel";
 import { Button, Paragraph } from "react-native-paper";
 import api from "../../../api/api.js";
 import { getDistance } from "geolib";
+import { useTPS } from "../../../contexts/TPSContext.js";
 
 const WIDTH = Dimensions.get("window").width;
 
@@ -22,6 +23,8 @@ const TpsIndex = ({ navigation }) => {
   const [tpsData, setTpsData] = React.useState([]);
   const [orderedTps, setOrderedTps] = React.useState([]);
   const [selectedTps, setSelectedTps] = React.useState(null);
+  const { hasSentData } = useTPS();
+  const [isLoading, setIsLoading] = React.useState(true);
 
   const orderedTpsData = React.useCallback(
     (tpsData) =>
@@ -54,6 +57,7 @@ const TpsIndex = ({ navigation }) => {
       .get("/tps")
       .then((res) => {
         setTpsData(res.data.data);
+        setIsLoading(false);
       })
       .catch((err) => console.log(err.response.data));
   };
@@ -71,7 +75,7 @@ const TpsIndex = ({ navigation }) => {
 
   React.useEffect(() => {
     fetchTpsData();
-  }, []);
+  }, [hasSentData]);
 
   React.useEffect(() => {
     if (tpsData && tpsData.length > 1) {
@@ -104,7 +108,8 @@ const TpsIndex = ({ navigation }) => {
     !location ||
     tpsData.length < 1 ||
     !selectedTps ||
-    orderedTps.length < 1
+    orderedTps.length < 1 ||
+    isLoading
   ) {
     return (
       <ScrollView
@@ -161,9 +166,7 @@ const TpsIndex = ({ navigation }) => {
         <Button
           mode="contained"
           style={{ backgroundColor: "#2FC8B0", width: "100%" }}
-          onPress={() =>
-            navigation.navigate("AddTps")
-          }
+          onPress={() => navigation.navigate("AddTps")}
         >
           Tambah Titik TPS Ilegal
         </Button>
