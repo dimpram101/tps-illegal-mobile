@@ -10,16 +10,43 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import Carousel from "react-native-reanimated-carousel";
 import { Button, Paragraph } from "react-native-paper";
+import api from "../../../api/api.js";
+import { getDistance } from "geolib";
 
 const WIDTH = Dimensions.get("window").width;
 
 const TpsIndex = ({ navigation }) => {
   const [location, setLocation] = React.useState(null);
   const carouselRef = useRef(null);
-  const [pin, setPin] = React.useState({
-    latitude: -1.145265,
-    longitude: 116.880085,
-  });
+  const mapRef = useRef(null);
+  const [tpsData, setTpsData] = React.useState([]);
+  const [orderedTps, setOrderedTps] = React.useState([]);
+  const [selectedTps, setSelectedTps] = React.useState(null);
+  const orderedTpsData = React.useCallback(
+    (tpsData) =>
+      tpsData.sort(
+        (a, b) =>
+          getDistance(
+            location
+              ? {
+                  latitude: location.coords.latitude,
+                  longitude: location.coords.longitude,
+                }
+              : { latitude: 0, longitude: 0 },
+            { latitude: a.latitude, longitude: a.longitude }
+          ) -
+          getDistance(
+            location
+              ? {
+                  latitude: location.coords.latitude,
+                  longitude: location.coords.longitude,
+                }
+              : { latitude: 0, longitude: 0 },
+            { latitude: b.latitude, longitude: b.longitude }
+          )
+      ),
+    [tpsData]
+  );
 
   React.useEffect(() => {
     const getLocation = async () => {
@@ -29,23 +56,63 @@ const TpsIndex = ({ navigation }) => {
         setLocation(location);
       }
     };
-
-    getLocation();;
+    getLocation();
   }, []);
 
-  if (!location) {
+  React.useEffect(() => {
+    api
+      .get("/tps")
+      .then((res) => {
+        setTpsData(res.data.data);
+      })
+      .catch((err) => console.log(err.response.data));
+  }, []);
+
+  React.useEffect(() => {
+    if (tpsData && tpsData.length > 1) {
+      const sorted = orderedTpsData(tpsData);
+      setOrderedTps(sorted);
+      setSelectedTps(sorted[0]);
+    }
+  }, [tpsData]);
+
+  React.useEffect(() => {
+    if (selectedTps) {
+      moveRegion(selectedTps.latitude, selectedTps.longitude);
+      carouselRef?.current?.scrollTo({
+        index: orderedTps.findIndex((s) => s.id === selectedTps.id),
+        animated: true,
+      });
+    }
+  }, [selectedTps]);
+
+  const moveRegion = (latitude, longitude) => {
+    mapRef?.current?.animateToRegion({
+      latitude,
+      longitude,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    });
+  };
+
+  if (!location || tpsData.length < 1 || !selectedTps || orderedTps.length < 1) {
     return (
-      <ScrollView contentContainerStyle={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <ScrollView
+        contentContainerStyle={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <ActivityIndicator color="#2FC8B0" size="large" />
       </ScrollView>
     );
   }
 
-  console.log(location);
-
   return (
     <ScrollView contentContainerStyle={{ flex: 1 }}>
       <MapView
+        ref={mapRef}
         style={{ width: "100%", height: "100%" }}
         provider={PROVIDER_GOOGLE}
         initialRegion={{
@@ -57,13 +124,17 @@ const TpsIndex = ({ navigation }) => {
         mapType="standard"
         showsUserLocation={true}
       >
-        <Marker
-          draggable
-          coordinate={pin}
-          onDragEnd={(e) => {
-            setPin(e.nativeEvent.coordinate);
-          }}
-        />
+        {orderedTps.map((marker) => (
+          <Marker
+            key={marker.id}
+            coordinate={{
+              latitude: marker.latitude,
+              longitude: marker.longitude,
+            }}
+            title={marker.address}
+            onPress={() => setSelectedTps(marker)}
+          />
+        ))}
       </MapView>
 
       <View
@@ -108,10 +179,9 @@ const TpsIndex = ({ navigation }) => {
             parallaxScrollingScale: 0.9,
             parallaxScrollingOffset: 50,
           }}
-          data={[...new Array(6).keys()]}
-          scrollAnimationDuration={1000}
-          onSnapToItem={(index) => console.log("current index:", index)}
-          renderItem={({ index }) => (
+          data={orderedTps}
+          onSnapToItem={(index) => setSelectedTps(orderedTps[index])}
+          renderItem={({ item }) => (
             <View
               style={{
                 flex: 1,
@@ -130,13 +200,9 @@ const TpsIndex = ({ navigation }) => {
                 <Text
                   style={{ textAlign: "left", fontSize: 17, fontWeight: 500 }}
                 >
-                  Jalan Pahlawan No. 1 Bukit Biru, Timbau, Kec. Tenggarong,
-                  Kabupaten Kutai Kartanegara {index}
+                  {item.address}
                 </Text>
-                <Paragraph style={{ fontWeight: 400 }}>
-                  Terdapat 1 TPS Ilegal di lokasi ini. TPS ini sudah bertumpuk
-                  sampah dan mengganggu lingkungan sekitar.
-                </Paragraph>
+                <Paragraph style={{ fontWeight: 400 }}>{item.notes}</Paragraph>
               </View>
               <Button
                 mode="contained"
@@ -159,60 +225,3 @@ const TpsIndex = ({ navigation }) => {
 };
 
 export default TpsIndex;
-
-{
-  /* <Pressable
-  style={{
-    position: "absolute",
-    bottom: 30,
-    borderRadius: 25,
-    opacity: 0.8,
-    right: 15,
-    paddingLeft: 2,
-    width: 50,
-    justifyContent: "center",
-    height: 50,
-    zIndex: 10,
-    backgroundColor: "#2FC8B0",
-  }}
->
-  <Ionicons name="add" size={50} color="white" />
-</Pressable> */
-}
-
-{
-  /* <Text
-        style={{
-          textAlign: "left",
-          marginTop: 10,
-          marginBottom: 4,
-          fontWeight: "bold",
-        }}
-      >
-        Pemetaan TPS Ilegal
-      </Text> */
-}
-{
-  /* <ScrollView
-        contentContainerStyle={{
-          width: "100%",
-          padding: 2,
-          borderRadius: 12,
-          gap: 4,
-        }}
-        scrollEnabled={true}
-      >
-        <FlatList
-          nestedScrollEnabled={true}
-          data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-          horizontal={false}
-          contentContainerStyle={{ gap }}
-          columnWrapperStyle={{ gap }}
-          renderItem={({ item, index }) => <TPSCard key={index} />}
-          numColumns={2}
-        />
-        {[1,2,3,4,5,6,7,8,9,10].map((item, index) => (
-          <TPSCard key={index}/>
-        ))}
-      </ScrollView> */
-}

@@ -66,7 +66,7 @@ const AddTps = ({ navigation }) => {
       })
       .then((res) => {
         console.log(res.data);
-        navigation.goBack();
+        navigation.navigate("Tabs");
       })
       .catch((err) => console.log(err.response.data))
       .finally(() => setIsLoading(false));
