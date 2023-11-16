@@ -2,21 +2,18 @@ import {
   View,
   Text,
   ScrollView,
-  RefreshControl,
   StyleSheet,
   TextInput,
   FlatList,
   Image,
-  Dimensions,
 } from "react-native";
 import React from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Button } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system";
 import api from "../../../api/api";
 
-const AddTps = () => {
+const AddTps = ({ navigation }) => {
   const [selectedImages, setSelectedImages] = React.useState([]);
   const [pin, setPin] = React.useState({
     latitude: -1.145265,
@@ -24,6 +21,7 @@ const AddTps = () => {
   });
   const [address, setAddress] = React.useState("");
   const [notes, setNotes] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -37,8 +35,9 @@ const AddTps = () => {
       alert("Kamu tidak memilih gambar apapun");
     }
   };
-  console.log(selectedImages);
+
   const onSubmitHandler = () => {
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("address", address);
     formData.append("user_id", "5");
@@ -65,21 +64,12 @@ const AddTps = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then((res) => console.log(res.data))
+      .then((res) => {
+        console.log(res.data);
+        navigation.goBack();
+      })
       .catch((err) => console.log(err.response.data))
-      .finally(() => console.log("DONE"));
-  };
-
-  const submitImageHandler = async () => {
-    // const uploadResult = await FileSystem.uploadAsync(
-    //   "http://192.168.137.21:5000/api/tps/7/image",
-    //   selectedImages[0],
-    //   {
-    //     httpMethod: "POST",
-    //     uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-    //     fieldName: "images",
-    //   }
-    // ).catch((err) => console.log(err));
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -163,14 +153,10 @@ const AddTps = () => {
               </React.Fragment>
             ) : (
               <FlatList
-                // contentContainerStyle={{
-                //   width: Dimensions.get("window").width,
-                // }}
                 ItemSeparatorComponent={() => <View style={{ width: 4 }} />}
                 data={selectedImages}
                 horizontal={true}
                 scrollEnabled={true}
-                // keyExtractor={(item) => item}
                 showsHorizontalScrollIndicator={true}
                 renderItem={({ item }) => (
                   <Image source={{ uri: item.uri }} style={{ width: 200 }} />
@@ -185,6 +171,7 @@ const AddTps = () => {
           textColor="white"
           style={{ borderRadius: 4 }}
           onPress={() => onSubmitHandler()}
+          disabled={isLoading}
         >
           Tambah
         </Button>
