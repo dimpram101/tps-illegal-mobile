@@ -22,6 +22,7 @@ const TpsIndex = ({ navigation }) => {
   const [tpsData, setTpsData] = React.useState([]);
   const [orderedTps, setOrderedTps] = React.useState([]);
   const [selectedTps, setSelectedTps] = React.useState(null);
+
   const orderedTpsData = React.useCallback(
     (tpsData) =>
       tpsData.sort(
@@ -48,6 +49,15 @@ const TpsIndex = ({ navigation }) => {
     [tpsData]
   );
 
+  const fetchTpsData = async () => {
+    api
+      .get("/tps")
+      .then((res) => {
+        setTpsData(res.data.data);
+      })
+      .catch((err) => console.log(err.response.data));
+  };
+
   React.useEffect(() => {
     const getLocation = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -60,12 +70,7 @@ const TpsIndex = ({ navigation }) => {
   }, []);
 
   React.useEffect(() => {
-    api
-      .get("/tps")
-      .then((res) => {
-        setTpsData(res.data.data);
-      })
-      .catch((err) => console.log(err.response.data));
+    fetchTpsData();
   }, []);
 
   React.useEffect(() => {
@@ -95,7 +100,12 @@ const TpsIndex = ({ navigation }) => {
     });
   };
 
-  if (!location || tpsData.length < 1 || !selectedTps || orderedTps.length < 1) {
+  if (
+    !location ||
+    tpsData.length < 1 ||
+    !selectedTps ||
+    orderedTps.length < 1
+  ) {
     return (
       <ScrollView
         contentContainerStyle={{
@@ -151,7 +161,9 @@ const TpsIndex = ({ navigation }) => {
         <Button
           mode="contained"
           style={{ backgroundColor: "#2FC8B0", width: "100%" }}
-          onPress={() => navigation.navigate("AddTps")}
+          onPress={() =>
+            navigation.navigate("AddTps")
+          }
         >
           Tambah Titik TPS Ilegal
         </Button>
