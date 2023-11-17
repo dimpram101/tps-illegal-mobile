@@ -52,6 +52,14 @@ const TpsIndex = ({ navigation }) => {
     [tpsData]
   );
 
+  const getLocation = async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status === "granted") {
+      const location = await Location.getLastKnownPositionAsync({});
+      setLocation(location);
+    }
+  };
+
   const fetchTpsData = async () => {
     api
       .get("/tps")
@@ -63,13 +71,6 @@ const TpsIndex = ({ navigation }) => {
   };
 
   React.useEffect(() => {
-    const getLocation = async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        const location = await Location.getCurrentPositionAsync({});
-        setLocation(location);
-      }
-    };
     getLocation();
   }, []);
 
@@ -78,7 +79,7 @@ const TpsIndex = ({ navigation }) => {
   }, [hasSentData]);
 
   React.useEffect(() => {
-    if (tpsData && tpsData.length > 1) {
+    if (tpsData && tpsData.length > 0) {
       const sorted = orderedTpsData(tpsData);
       setOrderedTps(sorted);
       setSelectedTps(sorted[0]);
@@ -99,18 +100,12 @@ const TpsIndex = ({ navigation }) => {
     mapRef?.current?.animateToRegion({
       latitude,
       longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
+      latitudeDelta: 0.038,
+      longitudeDelta: 0.0024,
     });
   };
 
-  if (
-    !location ||
-    tpsData.length < 1 ||
-    !selectedTps ||
-    orderedTps.length < 1 ||
-    isLoading
-  ) {
+  if (!location || isLoading) {
     return (
       <ScrollView
         contentContainerStyle={{
@@ -136,7 +131,6 @@ const TpsIndex = ({ navigation }) => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
-        mapType="standard"
         showsUserLocation={true}
       >
         {orderedTps.map((marker) => (
@@ -155,7 +149,7 @@ const TpsIndex = ({ navigation }) => {
       <View
         style={{
           position: "absolute",
-          bottom: WIDTH / 1.8 - 4,
+          bottom: orderedTps.length > 0 ? WIDTH / 1.8 - 4 : 10,
           zIndex: 10,
           paddingHorizontal: 20,
           justifyContent: "center",
@@ -182,58 +176,57 @@ const TpsIndex = ({ navigation }) => {
           justifyContent: "center",
         }}
       >
-        <Carousel
-          ref={carouselRef}
-          width={WIDTH}
-          height={WIDTH / 1.8}
-          pagingEnabled
-          snapEnabled
-          loop={false}
-          mode="parallax"
-          modeConfig={{
-            parallaxScrollingScale: 0.9,
-            parallaxScrollingOffset: 50,
-          }}
-          data={orderedTps}
-          onSnapToItem={(index) => setSelectedTps(orderedTps[index])}
-          renderItem={({ item }) => (
-            <View
-              style={{
-                flex: 1,
-                borderRadius: 24,
-                padding: 8,
-                backgroundColor: "rgba(255,255,255,0.8)",
-                justifyContent: "space-between",
-              }}
-            >
+        {orderedTps.length > 0 && (
+          <Carousel
+            ref={carouselRef}
+            width={WIDTH}
+            height={WIDTH / 1.8}
+            pagingEnabled
+            snapEnabled
+            loop={false}
+            mode="parallax"
+            modeConfig={{
+              parallaxScrollingScale: 0.9,
+              parallaxScrollingOffset: 50,
+            }}
+            data={orderedTps}
+            onSnapToItem={(index) => setSelectedTps(orderedTps[index])}
+            renderItem={({ item }) => (
               <View
                 style={{
                   flex: 1,
+                  borderRadius: 24,
                   padding: 8,
+                  backgroundColor: "rgba(255,255,255,0.8)",
+                  justifyContent: "space-between",
                 }}
               >
-                <Text
-                  style={{ textAlign: "left", fontSize: 17, fontWeight: 500 }}
+                <View
+                  style={{
+                    flex: 1,
+                    padding: 8,
+                  }}
                 >
-                  {item.address}
-                </Text>
-                <Paragraph style={{ fontWeight: 400 }}>{item.notes}</Paragraph>
+                  <Text
+                    style={{ textAlign: "left", fontSize: 17, fontWeight: 500 }}
+                  >
+                    {item.address}
+                  </Text>
+                  <Paragraph style={{ fontWeight: 400 }}>
+                    {item.notes}
+                  </Paragraph>
+                </View>
+                <Button
+                  mode="contained"
+                  style={{ backgroundColor: "#2FC8B0", width: "100%" }}
+                  onPress={() => navigation.navigate("TpsDetail", { tpsId: item.id })}
+                >
+                  Lihat Detail
+                </Button>
               </View>
-              <Button
-                mode="contained"
-                style={{
-                  backgroundColor: "#2FC8B0",
-                  borderRadius: 12,
-                  width: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                Lihat Detail
-              </Button>
-            </View>
-          )}
-        />
+            )}
+          />
+        )}
       </View>
     </ScrollView>
   );

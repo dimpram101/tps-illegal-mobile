@@ -13,6 +13,7 @@ import { Button } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import api from "../../../api/api";
 import { useTPS } from "../../../contexts/TPSContext";
+import { getAddressFromCoordinates } from "../../../utils/googleMaps";
 
 const AddTps = ({ navigation }) => {
   const [selectedImages, setSelectedImages] = React.useState([]);
@@ -23,11 +24,11 @@ const AddTps = ({ navigation }) => {
   const [address, setAddress] = React.useState("");
   const [notes, setNotes] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
-  const { hasSentData, setHasSentData } = useTPS();
+  const { setHasSentData } = useTPS();
 
   React.useEffect(() => {
     setHasSentData(false);
-  }, [])
+  }, []);
 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -43,6 +44,10 @@ const AddTps = ({ navigation }) => {
   };
 
   const onSubmitHandler = () => {
+    if (selectedImages.length < 1) {
+      alert("Harap masukkan setidaknya 1 foto");
+      return;
+    }
     setIsLoading(true);
     const formData = new FormData();
     formData.append("address", address);
@@ -50,11 +55,6 @@ const AddTps = ({ navigation }) => {
     formData.append("notes", notes);
     formData.append("latitude", `${pin.latitude}`);
     formData.append("longitude", `${pin.longitude}`);
-
-    if (selectedImages.length < 1) {
-      alert("Harap masukkan setidaknya 1 foto");
-      return;
-    }
 
     selectedImages.forEach((image, index) => {
       formData.append("images", {
@@ -79,6 +79,8 @@ const AddTps = ({ navigation }) => {
       .finally(() => setIsLoading(false));
   };
 
+  console.log(pin);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={{ width: "100%", height: 270, padding: 0 }}>
@@ -98,6 +100,15 @@ const AddTps = ({ navigation }) => {
             coordinate={pin}
             onDragEnd={(e) => {
               setPin(e.nativeEvent.coordinate);
+              getAddressFromCoordinates(
+                e.nativeEvent.coordinate.latitude,
+                e.nativeEvent.coordinate.longitude
+              )
+                .then((address) => {
+                  console.log(address);
+                  // setAddress(address);
+                })
+                .catch((err) => console.log(err));
             }}
           />
         </MapView>
