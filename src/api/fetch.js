@@ -20,3 +20,14 @@ export const getAllTPS = async () => {
     throw error;
   }
 };
+
+export const getTPSHistory = async () => {
+  const authData = await AsyncStorage.getItem("authData");
+  const parsedAuthData = JSON.parse(authData);
+  try {
+    const res = await api.get(`/user/${parsedAuthData.userId}/tps`);
+    return res.data.data;
+  } catch (error) {
+    throw error;
+  }
+};

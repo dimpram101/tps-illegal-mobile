@@ -56,6 +56,7 @@ const TpsIndex = ({ navigation }) => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
       const location = await Location.getCurrentPositionAsync({});
+      // const location = await Location.getCurrentPositionAsync({});
       console.log(location);
       setLocation(location);
     }
@@ -72,7 +73,7 @@ const TpsIndex = ({ navigation }) => {
 
   React.useEffect(() => {
     getLocation();
-  }, []);
+  }, [isLoading]);
 
   React.useEffect(() => {
     fetchTpsData();
@@ -105,6 +106,7 @@ const TpsIndex = ({ navigation }) => {
     });
   };
 
+  console.log({ location, isLoading });
   if (!location || isLoading) {
     return (
       <ScrollView
