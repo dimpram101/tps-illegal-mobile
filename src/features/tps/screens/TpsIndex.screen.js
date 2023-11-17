@@ -10,9 +10,9 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 import Carousel from "react-native-reanimated-carousel";
 import { Button, Paragraph } from "react-native-paper";
-import api from "../../../api/api.js";
 import { getDistance } from "geolib";
 import { useTPS } from "../../../contexts/TPSContext.js";
+import { getAllTPS } from "../../../api/fetch.js";
 
 const WIDTH = Dimensions.get("window").width;
 
@@ -55,16 +55,16 @@ const TpsIndex = ({ navigation }) => {
   const getLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status === "granted") {
-      const location = await Location.getLastKnownPositionAsync({});
+      const location = await Location.getCurrentPositionAsync({});
+      console.log(location);
       setLocation(location);
     }
   };
 
   const fetchTpsData = async () => {
-    api
-      .get("/tps")
-      .then((res) => {
-        setTpsData(res.data.data);
+    getAllTPS()
+      .then((data) => {
+        setTpsData(data);
         setIsLoading(false);
       })
       .catch((err) => console.log(err.response.data));
@@ -219,7 +219,9 @@ const TpsIndex = ({ navigation }) => {
                 <Button
                   mode="contained"
                   style={{ backgroundColor: "#2FC8B0", width: "100%" }}
-                  onPress={() => navigation.navigate("TpsDetail", { tpsId: item.id })}
+                  onPress={() =>
+                    navigation.navigate("TpsDetail", { tpsId: item.id })
+                  }
                 >
                   Lihat Detail
                 </Button>

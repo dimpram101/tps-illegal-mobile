@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import React from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { Button } from "react-native-paper";
+import { Button, IconButton } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import api from "../../../api/api";
 import { useTPS } from "../../../contexts/TPSContext";
@@ -79,8 +79,6 @@ const AddTps = ({ navigation }) => {
       .finally(() => setIsLoading(false));
   };
 
-  console.log(pin);
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={{ width: "100%", height: 270, padding: 0 }}>
@@ -98,18 +96,7 @@ const AddTps = ({ navigation }) => {
           <Marker
             draggable
             coordinate={pin}
-            onDragEnd={(e) => {
-              setPin(e.nativeEvent.coordinate);
-              getAddressFromCoordinates(
-                e.nativeEvent.coordinate.latitude,
-                e.nativeEvent.coordinate.longitude
-              )
-                .then((address) => {
-                  console.log(address);
-                  // setAddress(address);
-                })
-                .catch((err) => console.log(err));
-            }}
+            onDragEnd={(e) => setPin(e.nativeEvent.coordinate)}
           />
         </MapView>
       </View>
@@ -124,6 +111,17 @@ const AddTps = ({ navigation }) => {
               placeholder="Masukkan alamat"
               value={address}
               onChangeText={(e) => setAddress(e)}
+              style={{ flex: 1 }}
+            />
+
+            <IconButton
+              mode="contained-tonal"
+              icon="map-marker"
+              iconColor="#ffffff"
+              size={20}
+              containerColor="#2FC8B0"
+              style={{ flex: 0.2, margin: 0, height: 40, borderRadius: 8}}
+              // onPress={pickImageAsync}
             />
           </View>
         </View>
@@ -213,9 +211,12 @@ const styles = StyleSheet.create({
     borderColor: "#E2E2E2",
     borderWidth: 1,
     borderRadius: 8,
-    justifyContent: "center",
+    justifyContent: "space-between",
     paddingLeft: 12,
     backgroundColor: "white",
+    flexDirection: "row",
+    gap: 4,
+    alignItems: "center",
   },
 });
 

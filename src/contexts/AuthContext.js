@@ -1,5 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import api from "../api/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AuthContext = createContext();
 
@@ -12,23 +13,38 @@ export const AuthProvider = ({ children }) => {
     authenticated: false,
   });
 
-  console.log(authState)
+  useEffect(() => {
+    const getAuthData = async () => {
+      try {
+        const authData = await AsyncStorage.getItem("authData");
+        if (authData) {
+          const parsedAuthData = JSON.parse(authData);
+          setAuthState({
+            ...parsedAuthData,
+            authenticated: true,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getAuthData();
+  }, []);
 
   const login = async (email, password) => {
     try {
-      // const res = await api.post("/auth/login", { email, password });
-      // console.log(res.data);
-
+      const res = await api.post("/auth/login", { email, password });
+      const authData = {
+        userId: res.data.data.user.id,
+        token: res.data.data.token,
+      };
       setAuthState({
-        userId: 5,
-        token: "token",
+        ...authData,
         authenticated: true,
       });
-      // setAuthState({
-      //   userId: res.data.data.user.id,
-      //   token: res.data.data.token,
-      //   authenticated: true,
-      // });
+
+      AsyncStorage.setItem("authData", JSON.stringify(authData));
     } catch (error) {
       console.log(error.response.data);
     }
@@ -38,7 +54,8 @@ export const AuthProvider = ({ children }) => {
     login(data.email, data.password);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await AsyncStorage.removeItem("authData");
     setAuthState({
       userId: null,
       token: null,

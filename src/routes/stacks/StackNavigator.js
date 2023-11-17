@@ -6,6 +6,7 @@ import Login from '../../features/auth/Login';
 import Register from '../../features/auth/Register';
 import AddTps from '../../features/tps/screens/AddTps';
 import TpsDetail from '../../features/tps/screens/TpsDetail';
+import HistoryTPS from '../../features/profile/screens/HistoryTPS';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,7 @@ const StackNavigator = () => {
           <Stack.Screen name="Tabs" component={TabsNavigator} options={{ headerShown: false, }} />
           <Stack.Screen name="AddTps" component={AddTps} options={{ headerShown: true, headerTitle: "Tambahkan Data TPS Ilegal" }} />
           <Stack.Screen name="TpsDetail" component={TpsDetail} options={{ headerShown: true, headerTitle: "Detail TPS" }} />
+          <Stack.Screen name="HistoryTPS" component={HistoryTPS} options={{ headerShown: true, headerTitle: "Riwayat Masukkan TPS" }} />
         </React.Fragment>
       )}
     </Stack.Navigator>

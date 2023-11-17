@@ -9,14 +9,14 @@ import { TPSProvider } from "./src/contexts/TPSContext";
 export default function App() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <NavigationContainer>
-        <AuthProvider>
+      <AuthProvider>
+        <NavigationContainer>
           <TPSProvider>
             <StackNavigator />
             <StatusBar style="auto" />
           </TPSProvider>
-        </AuthProvider>
-      </NavigationContainer>
+        </NavigationContainer>
+      </AuthProvider>
     </SafeAreaView>
   );
 }
