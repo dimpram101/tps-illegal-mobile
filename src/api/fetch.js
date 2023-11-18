@@ -100,3 +100,26 @@ export const getUserVolunteerHistory = async (userId) => {
     throw error;
   }
 };
+
+export const updateUserData = async (userId, data) => {
+  try {
+    const res = await api.put(`/user/${userId}`, data);
+
+    return res.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateUserPassword = async (userId, data) => {
+  try {
+    const res = await api.put(`/user/${userId}/password`, {
+      password: data.password,
+      confirm_password: data.confirmPassword,
+    });
+
+    return res.data.data;
+  } catch (error) {
+    throw error;
+  }
+};

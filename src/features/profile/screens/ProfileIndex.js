@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../../contexts/AuthContext";
 import { getUserData } from "../../../api/fetch";
@@ -37,13 +37,15 @@ const ProfileIndex = ({ navigation }) => {
         </Text>
         <Pressable
           style={styles.opsiItem}
-          onPress={() => navigation.navigate("TPS")}
+          onPress={() => navigation.navigate("EditAccount")}
         >
           <Text style={{ fontSize: 16 }}>Edit Akun</Text>
           <Ionicons name="chevron-forward-outline" size={20} color="grey" />
         </Pressable>
-        <Pressable style={styles.opsiItem} 
-          onPress={() => navigation.push("HistoryVolunteer")}>
+        <Pressable
+          style={styles.opsiItem}
+          onPress={() => navigation.push("HistoryVolunteer")}
+        >
           <Text style={{ fontSize: 16 }}>Riwayat Volunteer</Text>
           <Ionicons name="chevron-forward-outline" size={20} color="grey" />
         </Pressable>
@@ -52,6 +54,13 @@ const ProfileIndex = ({ navigation }) => {
           onPress={() => navigation.push("HistoryTPS")}
         >
           <Text style={{ fontSize: 16 }}>Riwayat Masukan TPS Ilegal</Text>
+          <Ionicons name="chevron-forward-outline" size={20} color="grey" />
+        </Pressable>
+        <Pressable
+          style={styles.opsiItem}
+          onPress={async () => await Linking.openURL('https://wa.me/6282150667710')}
+        >
+          <Text style={{ fontSize: 16 }}>Customer Service</Text>
           <Ionicons name="chevron-forward-outline" size={20} color="grey" />
         </Pressable>
         <Pressable style={styles.opsiItem} onPress={() => onLogout()}>
