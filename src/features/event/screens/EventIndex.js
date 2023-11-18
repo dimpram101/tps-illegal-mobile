@@ -13,7 +13,7 @@ import { getAllEvents } from "../../../api/fetch";
 
 const WIDTH = Dimensions.get("window").width;
 
-const EventIndex = () => {
+const EventIndex = ({ navigation }) => {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -23,8 +23,6 @@ const EventIndex = () => {
       .catch((error) => console.log(error.response.data))
       .finally(() => setIsLoading(false));
   }, []);
-
-  console.log(events);
 
   if (isLoading) {
     return (
@@ -84,7 +82,7 @@ const EventIndex = () => {
           <React.Fragment>
             <Text style={styles.eventTitle}>Ikut Volunteer, yuk!</Text>
             {events.map((event) => (
-              <EventCard event={event} key={event.id}/>
+              <EventCard event={event} key={event.id} navigation={navigation}/>
             ))}
           </React.Fragment>
         ) : (

@@ -2,8 +2,11 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import moment from "moment";
 
-const EventCard = ({ event }) => {
-  const isStartAndEndAtSameDay = moment(event.start_at).isSame(event.end_at, "day");
+const EventCard = ({ event, navigation }) => {
+  const isStartAndEndAtSameDay = moment(event.start_at).isSame(
+    event.end_at,
+    "day"
+  );
 
   return (
     <React.Fragment>
@@ -25,11 +28,25 @@ const EventCard = ({ event }) => {
           </View>
           <View style={styles.eventTextRowSection}>
             <Text style={styles.eventText}>{event.gather_point}</Text>
-            <Text style={[styles.eventText, styles.eventRightSectionText]}>Kuota : {event._count.user_join_event}/{event.quota}</Text>
+            <Text style={[styles.eventText, styles.eventRightSectionText]}>
+              Kuota : {event._count.user_join_event}/{event.quota}
+            </Text>
           </View>
           <View style={styles.eventTextRowSection}>
-            <Text style={styles.eventText}>{isStartAndEndAtSameDay ? moment(event.start_at).format("DD-MM-YYYY") : moment(event.start_at).format("DD-MM-YYYY") - moment(event.end_at).format("DD-MM-YYYY")}</Text>
-            <Pressable style={styles.eventDetailButton}>
+            <Text style={styles.eventText}>
+              {isStartAndEndAtSameDay
+                ? moment(event.start_at).format("DD-MM-YYYY")
+                : moment(event.start_at).format("DD-MM-YYYY") -
+                  moment(event.end_at).format("DD-MM-YYYY")}
+            </Text>
+            <Pressable
+              style={styles.eventDetailButton}
+              onPress={() =>
+                navigation.push("EventDetail", {
+                  eventId: event.id,
+                })
+              }
+            >
               <Text style={styles.eventDetailButtonText}>Lihat Detail</Text>
             </Pressable>
           </View>
