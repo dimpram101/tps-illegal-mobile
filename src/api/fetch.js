@@ -32,9 +32,19 @@ export const getTPSHistory = async () => {
   }
 };
 
-export const getAllEvents = async () => {
+export const getAllEvents = async (
+  withImages = false,
+  withUsers = false,
+  withTPS = false
+) => {
   try {
-    const res = await api.get("/event");
+    const res = await api.get("/event", {
+      params: {
+        withImages,
+        withUsers,
+        withTPS,
+      },
+    });
 
     return res.data.data;
   } catch (error) {

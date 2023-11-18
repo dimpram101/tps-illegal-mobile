@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   View,
+  RefreshControl,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import EventCard from "../components/EventCard";
@@ -17,12 +18,24 @@ const EventIndex = ({ navigation }) => {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    getAllEvents()
+  const fetchData = () => {
+    getAllEvents((withImage = true), (withUsers = false), (withTPS = false))
       .then((data) => setEvents(data))
       .catch((error) => console.log(error.response.data))
       .finally(() => setIsLoading(false));
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   if (isLoading) {
     return (
@@ -47,6 +60,14 @@ const EventIndex = ({ navigation }) => {
           flex: 1,
         },
       ]}
+      refreshControl={
+        <RefreshControl
+          refreshing={isLoading}
+          onRefresh={() => {
+            fetchData();
+          }}
+        />
+      }
     >
       <Carousel
         width={WIDTH}
@@ -82,7 +103,7 @@ const EventIndex = ({ navigation }) => {
           <React.Fragment>
             <Text style={styles.eventTitle}>Ikut Volunteer, yuk!</Text>
             {events.map((event) => (
-              <EventCard event={event} key={event.id} navigation={navigation}/>
+              <EventCard event={event} key={event.id} navigation={navigation} />
             ))}
           </React.Fragment>
         ) : (

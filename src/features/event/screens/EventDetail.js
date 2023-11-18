@@ -180,7 +180,7 @@ const EventDetail = ({ navigation, route }) => {
               event._count.user_join_event === event.quota ||
               enrollLoading ||
               event.status === "CLOSED" ||
-              new Date(event.start_at) >= new Date() ||
+              new Date(event.start_at) <= new Date() ||
               isEnrolled
             }
             onPress={onUserEnroll}

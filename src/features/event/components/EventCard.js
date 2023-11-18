@@ -1,12 +1,15 @@
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import moment from "moment";
+import { BASE_URL } from "../../../api/api";
 
 const EventCard = ({ event, navigation }) => {
   const isStartAndEndAtSameDay = moment(event.start_at).isSame(
     event.end_at,
     "day"
   );
+
+  console.log(event);
 
   return (
     <React.Fragment>
@@ -15,7 +18,10 @@ const EventCard = ({ event, navigation }) => {
           <Image
             resizeMode="cover"
             source={{
-              uri: "https://i.pinimg.com/originals/09/6a/35/096a35453660aa9b83ba4ab6d9182d61.jpg",
+              uri:
+                event.event_images.length > 0
+                  ? `${BASE_URL}${`${event.event_images[0].path}`.split("public\\")[1]}`
+                  : "https://i.pinimg.com/originals/09/6a/35/096a35453660aa9b83ba4ab6d9182d61.jpg",
             }}
             style={styles.eventImage}
           />
@@ -36,8 +42,9 @@ const EventCard = ({ event, navigation }) => {
             <Text style={styles.eventText}>
               {isStartAndEndAtSameDay
                 ? moment(event.start_at).format("DD-MM-YYYY")
-                : moment(event.start_at).format("DD-MM-YYYY") -
-                  moment(event.end_at).format("DD-MM-YYYY")}
+                : `${moment(event.start_at).format("DD-MM-YYYY")} - ${moment(
+                    event.end_at
+                  ).format("DD-MM-YYYY")}`}
             </Text>
             <Pressable
               style={styles.eventDetailButton}

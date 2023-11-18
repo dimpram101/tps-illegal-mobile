@@ -52,5 +52,6 @@ export default HistoryVolunteer;
 const styles = StyleSheet.create({
   container: {
     padding: 8,
+    gap: 4,
   },
 });
