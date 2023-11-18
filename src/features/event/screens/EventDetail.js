@@ -4,18 +4,27 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  ToastAndroid,
   View,
 } from "react-native";
 import { Button } from "react-native-paper";
 import React, { useEffect, useState } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { getEventById } from "../../../api/fetch";
+import {
+  checkUserEnrollment,
+  enrollEvent,
+  getEventById,
+} from "../../../api/fetch";
 import moment from "moment";
+import { useAuth } from "../../../contexts/AuthContext";
 
-const EventDetail = ({ route }) => {
+const EventDetail = ({ navigation, route }) => {
   const [event, setEvent] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const eventId = route.params.eventId;
+  const { authState } = useAuth();
+  const [enrollLoading, setEnrollLoading] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
 
   useEffect(() => {
     getEventById(
@@ -27,6 +36,12 @@ const EventDetail = ({ route }) => {
       .then((data) => setEvent(data))
       .catch((err) => console.log(err.response.data))
       .finally(() => setIsLoading(false));
+  }, []);
+
+  useEffect(() => {
+    checkUserEnrollment({ eventId, userId: authState.userId })
+      .then((data) => setIsEnrolled(data))
+      .catch((err) => console.log(err.response.data));
   }, []);
 
   if (isLoading || !event) {
@@ -43,6 +58,17 @@ const EventDetail = ({ route }) => {
       </View>
     );
   }
+
+  const onUserEnroll = () => {
+    setEnrollLoading(true);
+    enrollEvent({ eventId, userId: authState.userId })
+      .then(() => {
+        ToastAndroid.show("Berhasil mendaftar!", ToastAndroid.SHORT);
+        navigation.goBack();
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setEnrollLoading(false));
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -146,15 +172,18 @@ const EventDetail = ({ route }) => {
           </View>
 
           <Button
-            mode="elevated"
+            mode="contained-tonal"
             style={styles.button}
             textColor="white"
+            buttonColor="#2FC8B0"
             disabled={
               event._count.user_join_event === event.quota ||
-              isLoading ||
+              enrollLoading ||
               event.status === "CLOSED" ||
-              new Date(event.start_at) >= new Date()
+              new Date(event.start_at) >= new Date() ||
+              isEnrolled
             }
+            onPress={onUserEnroll}
           >
             Daftar Volunteer
           </Button>
@@ -201,6 +230,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     flex: 1,
+    gap: 2,
   },
   eventText: {
     fontSize: 16,
@@ -237,7 +267,6 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "100%",
-    backgroundColor: "#2FC8B0",
     borderRadius: 4,
     padding: 0,
   },

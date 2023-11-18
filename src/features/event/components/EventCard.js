@@ -42,7 +42,7 @@ const EventCard = ({ event, navigation }) => {
             <Pressable
               style={styles.eventDetailButton}
               onPress={() =>
-                navigation.push("EventDetail", {
+                navigation.navigate("EventDetail", {
                   eventId: event.id,
                 })
               }

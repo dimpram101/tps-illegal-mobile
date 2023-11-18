@@ -42,19 +42,51 @@ export const getAllEvents = async () => {
   }
 };
 
-export const getEventById = async (id, withImage = false, withUser = false, withTPS = false) => {
+export const getEventById = async (
+  id,
+  withImage = false,
+  withUser = false,
+  withTPS = false
+) => {
   try {
     const res = await api.get(`/event/${id}`, {
       params: {
         withImage,
         withUser,
-        withTPS
+        withTPS,
       },
     });
     // console.log(res);
     return res.data.data;
   } catch (error) {
     console.log(error.response.data);
-    throw new error;
+    throw new error();
+  }
+};
+
+export const enrollEvent = async ({ eventId, userId }) => {
+  try {
+    const res = await api.post(`/event/${eventId}/enroll`, {
+      user_id: userId,
+    });
+
+    return;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const checkUserEnrollment = async ({ eventId, userId }) => {
+  try {
+    console.log(eventId, userId);
+    const res = await api.get(`/event/${eventId}/enroll`, {
+      params: {
+        user_id: userId,
+      },
+    });
+
+    return res.data.data;
+  } catch (error) {
+    throw error;
   }
 };
