@@ -13,11 +13,12 @@ import { Button, Paragraph } from "react-native-paper";
 import { getDistance } from "geolib";
 import { useTPS } from "../../../contexts/TPSContext.js";
 import { getAllTPS } from "../../../api/fetch.js";
+import { useLocation } from "../../../contexts/LocationContext.js";
 
 const WIDTH = Dimensions.get("window").width;
 
 const TpsIndex = ({ navigation }) => {
-  const [location, setLocation] = React.useState(null);
+  const { location } = useLocation();
   const carouselRef = useRef(null);
   const mapRef = useRef(null);
   const [tpsData, setTpsData] = React.useState([]);
@@ -52,16 +53,6 @@ const TpsIndex = ({ navigation }) => {
     [tpsData]
   );
 
-  const getLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status === "granted") {
-      const location = await Location.getCurrentPositionAsync({});
-      // const location = await Location.getCurrentPositionAsync({});
-      console.log(location);
-      setLocation(location);
-    }
-  };
-
   const fetchTpsData = async () => {
     getAllTPS()
       .then((data) => {
@@ -70,10 +61,6 @@ const TpsIndex = ({ navigation }) => {
       })
       .catch((err) => console.log(err.response.data));
   };
-
-  React.useEffect(() => {
-    getLocation();
-  }, [isLoading]);
 
   React.useEffect(() => {
     fetchTpsData();

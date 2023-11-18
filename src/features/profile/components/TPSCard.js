@@ -8,7 +8,7 @@ const TPSCard = ({ tps, navigation }) => {
     <View style={styles.container}>
       <View style={styles.leftContent}>
         <View>
-          <Text style={styles.address}>{tps.address}</Text>
+          <Text style={styles.address} numberOfLines={2}>{tps.address}</Text>
           <Text style={styles.notes} numberOfLines={2}>
             {tps.notes}
           </Text>

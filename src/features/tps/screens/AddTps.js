@@ -13,27 +13,42 @@ import { Button, IconButton } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import api from "../../../api/api";
 import { useTPS } from "../../../contexts/TPSContext";
-import { getAddressFromCoordinates } from "../../../utils/googleMaps";
+import { useLocation } from "../../../contexts/LocationContext";
+import { getAddressFromLocation } from "../../../utils/getAddressFromLocation";
+import {useAuth} from "../../../contexts/AuthContext";
 
 const AddTps = ({ navigation }) => {
   const [selectedImages, setSelectedImages] = React.useState([]);
   const [pin, setPin] = React.useState({
-    latitude: -1.145265,
-    longitude: 116.880085,
+    latitude: -0.45689,
+    longitude: 117.00183,
   });
   const [address, setAddress] = React.useState("");
   const [notes, setNotes] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
   const { setHasSentData } = useTPS();
+  const { location } = useLocation();
+  const { authState } = useAuth();
+  const [fetchLoading, setFetchLoading] = React.useState(false);
 
   React.useEffect(() => {
     setHasSentData(false);
   }, []);
 
+  React.useEffect(() => {
+    if (location) {
+      setPin({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+    }
+  }, [location]);
+
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       quality: 1,
       allowsMultipleSelection: true,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
 
     if (!result.canceled) {
@@ -44,6 +59,10 @@ const AddTps = ({ navigation }) => {
   };
 
   const onSubmitHandler = () => {
+    if (!notes || !address) {
+      alert("Harap isi semua input");
+      return; 
+    }
     if (selectedImages.length < 1) {
       alert("Harap masukkan setidaknya 1 foto");
       return;
@@ -51,7 +70,7 @@ const AddTps = ({ navigation }) => {
     setIsLoading(true);
     const formData = new FormData();
     formData.append("address", address);
-    formData.append("user_id", "5");
+    formData.append("user_id", authState.userId);
     formData.append("notes", notes);
     formData.append("latitude", `${pin.latitude}`);
     formData.append("longitude", `${pin.longitude}`);
@@ -79,6 +98,14 @@ const AddTps = ({ navigation }) => {
       .finally(() => setIsLoading(false));
   };
 
+  const getLocationHandler = async () => {
+    setFetchLoading(true);
+    getAddressFromLocation(pin.latitude, pin.longitude)
+      .then((data) => setAddress(data))
+      .catch((err) => console.log(err))
+      .finally(() => setFetchLoading(false));
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={{ width: "100%", height: 270, padding: 0 }}>
@@ -86,11 +113,12 @@ const AddTps = ({ navigation }) => {
           style={{ width: "100%", height: "100%" }}
           provider={PROVIDER_GOOGLE}
           initialRegion={{
-            latitude: -1.145265,
-            longitude: 116.880085,
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
+          showsUserLocation={true}
           mapType="standard"
         >
           <Marker
@@ -120,8 +148,9 @@ const AddTps = ({ navigation }) => {
               iconColor="#ffffff"
               size={20}
               containerColor="#2FC8B0"
-              style={{ flex: 0.2, margin: 0, height: 40, borderRadius: 8}}
-              // onPress={pickImageAsync}
+              style={{ flex: 0.2, margin: 0, height: 40, borderRadius: 8 }}
+              onPress={() => getLocationHandler()}
+              disabled={fetchLoading}
             />
           </View>
         </View>
@@ -130,7 +159,7 @@ const AddTps = ({ navigation }) => {
           <Text style={styles.labelInput}>Catatan</Text>
           <View style={styles.textInputContainer}>
             <TextInput
-              placeholder="Masukkan catatan"
+              placeholder="Masukkan catatan seperti lokasi tepat, dll"
               value={notes}
               onChangeText={(e) => setNotes(e)}
             />

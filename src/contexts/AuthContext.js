@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
         ...authData,
         authenticated: true,
       });
-
+      console.log(authData);
       AsyncStorage.setItem("authData", JSON.stringify(authData));
     } catch (error) {
       console.log(error.response.data);

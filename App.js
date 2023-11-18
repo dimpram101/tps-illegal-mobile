@@ -5,18 +5,21 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AuthProvider } from "./src/contexts/AuthContext";
 import { TPSProvider } from "./src/contexts/TPSContext";
+import { LocationProvider } from "./src/contexts/LocationContext";
 
 export default function App() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <AuthProvider>
-        <NavigationContainer>
-          <TPSProvider>
-            <StackNavigator />
-            <StatusBar style="auto" />
-          </TPSProvider>
-        </NavigationContainer>
-      </AuthProvider>
+      <NavigationContainer>
+        <AuthProvider>
+          <LocationProvider>
+            <TPSProvider>
+              <StackNavigator />
+              <StatusBar style="auto" />
+            </TPSProvider>
+          </LocationProvider>
+        </AuthProvider>
+      </NavigationContainer>
     </SafeAreaView>
   );
 }

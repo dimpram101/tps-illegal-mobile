@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
   profileCard: {
     height: 140,
     width: "100%",
-    borderWidth: 1,
-    borderColor: "grey",
+    borderWidth: 0.7,
+    borderColor: "#2FC8B0",
     borderRadius: 12,
     flexDirection: "row",
     backgroundColor: "white",
@@ -100,8 +100,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingHorizontal: 12,
     borderRadius: 8,
-    borderColor: "grey",
-    borderWidth: 0.5,
+    borderColor: "#2FC8B0",
+    borderWidth: 0.7,
   },
 });
 
