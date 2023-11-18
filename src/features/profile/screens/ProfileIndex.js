@@ -42,7 +42,8 @@ const ProfileIndex = ({ navigation }) => {
           <Text style={{ fontSize: 16 }}>Edit Akun</Text>
           <Ionicons name="chevron-forward-outline" size={20} color="grey" />
         </Pressable>
-        <Pressable style={styles.opsiItem}>
+        <Pressable style={styles.opsiItem} 
+          onPress={() => navigation.push("HistoryVolunteer")}>
           <Text style={{ fontSize: 16 }}>Riwayat Volunteer</Text>
           <Ionicons name="chevron-forward-outline" size={20} color="grey" />
         </Pressable>

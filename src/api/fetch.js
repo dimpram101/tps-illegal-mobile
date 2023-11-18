@@ -90,3 +90,13 @@ export const checkUserEnrollment = async ({ eventId, userId }) => {
     throw error;
   }
 };
+
+export const getUserVolunteerHistory = async (userId) => {
+  try {
+    const res = await api.get(`/user/${userId}/event`);
+
+    return res.data.data;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -8,6 +8,7 @@ import AddTps from '../../features/tps/screens/AddTps';
 import TpsDetail from '../../features/tps/screens/TpsDetail';
 import HistoryTPS from '../../features/profile/screens/HistoryTPS';
 import EventDetail from '../../features/event/screens/EventDetail';
+import HistoryVolunteer from '../../features/profile/screens/HistoryVolunteer';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,8 +31,9 @@ const StackNavigator = () => {
           <Stack.Screen name="Tabs" component={TabsNavigator} options={{ headerShown: false, }} />
           <Stack.Screen name="AddTps" component={AddTps} options={{ headerShown: true, headerTitle: "Tambahkan Data TPS Ilegal" }} />
           <Stack.Screen name="TpsDetail" component={TpsDetail} options={{ headerShown: true, headerTitle: "Detail TPS" }} />
-          <Stack.Screen name="HistoryTPS" component={HistoryTPS} options={{ headerShown: true, headerTitle: "Riwayat Masukkan TPS" }} />
           <Stack.Screen name="EventDetail" component={EventDetail} options={{ headerShown: true, headerTitle: "Detail Event" }} />
+          <Stack.Screen name="HistoryTPS" component={HistoryTPS} options={{ headerShown: true, headerTitle: "Riwayat Masukkan TPS" }} />
+          <Stack.Screen name="HistoryVolunteer" component={HistoryVolunteer} options={{ headerShown: true, headerTitle: "Riwayat Volunteer" }} />
         </React.Fragment>
       )}
     </Stack.Navigator>
