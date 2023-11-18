@@ -1,12 +1,19 @@
-import React from 'react'
-import { Text, View } from 'react-native'
+import React from "react";
+import { ScrollView, StyleSheet, Text } from "react-native";
 
 const EventIndex = () => {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text>Event Index</Text>
-    </View>
-  )
-}
+    </ScrollView>
+  );
+};
 
-export default EventIndex
+export default EventIndex;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 8,
+  },
+});
