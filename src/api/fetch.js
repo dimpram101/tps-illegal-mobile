@@ -31,3 +31,13 @@ export const getTPSHistory = async () => {
     throw error;
   }
 };
+
+export const getAllEvents = async () => {
+  try {
+    const res = await api.get('/event')
+
+    return res.data.data
+  } catch (error) {
+    throw error
+  }
+}

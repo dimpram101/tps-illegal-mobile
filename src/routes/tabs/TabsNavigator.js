@@ -16,8 +16,10 @@ const TabsNavigator = () => {
           tabBarStyle: {
             height: 60,
             paddingBottom: 5,
+            // backgroundColor: "#004E64",
           },
           tabBarActiveTintColor: "#2FC8B0",
+          // tabBarInactiveTintColor: "rgba(255,255,255,0.5)",
           elevation: 0,
         }}
       >
