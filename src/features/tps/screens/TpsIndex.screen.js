@@ -197,11 +197,11 @@ const TpsIndex = ({ navigation }) => {
                   }}
                 >
                   <Text
-                    style={{ textAlign: "left", fontSize: 17, fontWeight: 500 }}
+                    style={{ textAlign: "left", fontSize: 20, fontWeight: 500 }}
                   >
                     {item.address}
                   </Text>
-                  <Paragraph style={{ fontWeight: 400 }}>
+                  <Paragraph style={{ fontWeight: 400, fontSize: 16 }}>
                     {item.notes}
                   </Paragraph>
                 </View>

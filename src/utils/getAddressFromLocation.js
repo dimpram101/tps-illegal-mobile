@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const getAddressFromLocation = async (latitude, longitude) => {
   try {
-    // console.log(`https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}`)
+    console.log(`https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}`)
     const res = await axios.get(
       `https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}`
     );

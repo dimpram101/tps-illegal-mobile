@@ -21,16 +21,20 @@ import { IconButton } from "react-native-paper";
 
 const TpsDetail = ({ route, navigation }) => {
   const [tpsData, setTpsData] = React.useState(null);
-  const [selectedImages, setSelectedImages] = React.useState([]);
+  const [selectedInputImages, setSelectedInputImages] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const { authState } = useAuth();
-  const [selectedImage, setSelectedImage] = React.useState(null);
+  const [selectedImage, setSelectedImage] = React.useState({
+    uri: "",
+    photoBy: "",
+    date: "",
+  });
   const [modalVisible, setModalVisible] = React.useState(false);
 
   const postImageHandler = async () => {
     const formData = new FormData();
 
-    selectedImages.forEach((image, index) => {
+    selectedInputImages.forEach((image, index) => {
       formData.append("images", {
         name: `image${index}`,
         type: "image/jpeg",
@@ -62,6 +66,7 @@ const TpsDetail = ({ route, navigation }) => {
           params: {
             withImage: true,
             withUser: true,
+            withUserFromImage: true,
           },
         })
         .then((res) => {
@@ -72,6 +77,8 @@ const TpsDetail = ({ route, navigation }) => {
     getTpsDetailData();
   }, []);
 
+  console.log(tpsData);
+
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       quality: 1,
@@ -79,7 +86,7 @@ const TpsDetail = ({ route, navigation }) => {
     });
 
     if (!result.canceled) {
-      setSelectedImages(result.assets.map((asset) => asset));
+      setSelectedInputImages(result.assets.map((asset) => asset));
     }
   };
 
@@ -93,27 +100,31 @@ const TpsDetail = ({ route, navigation }) => {
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(!modalVisible);
-          setSelectedImage(null);
+          setSelectedImage({
+            uri: "",
+            photoBy: "",
+          });
         }}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            {/* <View style={{ flex: 1, width: "100%" }}> */}
             <Image
               source={{
-                uri: selectedImage,
+                uri: selectedImage.uri,
               }}
               resizeMode="contain"
               style={{ width: "100%", height: "100%", flex: 1 }}
             />
-            {/* </View> */}
+            <Text style={{
+              fontSize: 12,
+              fontStyle: "italic",
+              marginBottom: 8,
+            }}>Diupload oleh {selectedImage.photoBy} pada {moment(selectedImage.date).format("DD-MM-YYYY")}</Text>
             <Pressable
               style={[
                 styles.button,
                 styles.buttonClose,
                 {
-                  // position: 'absolute',
-                  // bottom: 12,
                   width: 100,
                 },
               ]}
@@ -184,9 +195,13 @@ const TpsDetail = ({ route, navigation }) => {
                 renderItem={({ item }) => (
                   <Pressable
                     onPress={() => {
-                      setSelectedImage(
-                        `${BASE_URL}${`${item.path}`.split("public\\")[1]}`
-                      );
+                      setSelectedImage({
+                        uri: `${BASE_URL}${
+                          `${item.path}`.split("public\\")[1]
+                        }`,
+                        photoBy: item.users.name,
+                        date: item.createdAt,
+                      });
                       setModalVisible(true);
                     }}
                   >
@@ -264,9 +279,9 @@ const TpsDetail = ({ route, navigation }) => {
           textColor="white"
           style={{ borderRadius: 4, flex: 0.3 }}
           onPress={() => postImageHandler()}
-          disabled={selectedImages.length < 1 || isLoading}
+          disabled={selectedInputImages.length < 1 || isLoading}
         >
-          Kirim {`(${selectedImages.length})`}
+          Kirim {`(${selectedInputImages.length})`}
         </Button>
       </View>
     </View>

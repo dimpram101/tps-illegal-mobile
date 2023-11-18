@@ -15,7 +15,7 @@ import api from "../../../api/api";
 import { useTPS } from "../../../contexts/TPSContext";
 import { useLocation } from "../../../contexts/LocationContext";
 import { getAddressFromLocation } from "../../../utils/getAddressFromLocation";
-import {useAuth} from "../../../contexts/AuthContext";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const AddTps = ({ navigation }) => {
   const [selectedImages, setSelectedImages] = React.useState([]);
@@ -61,7 +61,7 @@ const AddTps = ({ navigation }) => {
   const onSubmitHandler = () => {
     if (!notes || !address) {
       alert("Harap isi semua input");
-      return; 
+      return;
     }
     if (selectedImages.length < 1) {
       alert("Harap masukkan setidaknya 1 foto");
@@ -148,7 +148,7 @@ const AddTps = ({ navigation }) => {
               iconColor="#ffffff"
               size={20}
               containerColor="#2FC8B0"
-              style={{ flex: 0.2, margin: 0, height: 40, borderRadius: 8 }}
+              style={{ flex: 0.2, margin: 0, height: "100%", borderRadius: 8, paddingVertical: 8 }}
               onPress={() => getLocationHandler()}
               disabled={fetchLoading}
             />
@@ -156,12 +156,21 @@ const AddTps = ({ navigation }) => {
         </View>
 
         <View>
-          <Text style={styles.labelInput}>Catatan</Text>
-          <View style={styles.textInputContainer}>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Text style={styles.labelInput}>Catatan</Text>
+            <Text style={styles.labelInput}>{notes.length}/120</Text>
+          </View>
+          <View style={[styles.textInputContainer, {paddingVertical: 4}]}>
             <TextInput
               placeholder="Masukkan catatan seperti lokasi tepat, dll"
               value={notes}
-              onChangeText={(e) => setNotes(e)}
+              multiline={true}
+              onChangeText={(e) => {
+                if (e.length > 120) return alert("Maksimal 100 karakter");
+                setNotes(e);
+              }}
             />
           </View>
         </View>
@@ -226,9 +235,7 @@ const AddTps = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: {},
   labelInput: {
     fontSize: 14,
     fontWeight: "600",
@@ -236,7 +243,6 @@ const styles = StyleSheet.create({
   },
   textInputContainer: {
     width: "100%",
-    height: 40,
     borderColor: "#E2E2E2",
     borderWidth: 1,
     borderRadius: 8,
