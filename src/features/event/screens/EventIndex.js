@@ -7,10 +7,12 @@ import {
   Text,
   View,
   RefreshControl,
+  Image,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import EventCard from "../components/EventCard";
 import { getAllEvents } from "../../../api/fetch";
+import { BASE_URL } from "../../../api/api";
 
 const WIDTH = Dimensions.get("window").width;
 
@@ -83,17 +85,26 @@ const EventIndex = ({ navigation }) => {
         }}
         autoPlay
         data={[1, 2, 3, 4, 5]}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <View
             style={{
               flex: 1,
               borderRadius: 24,
-              padding: 8,
               backgroundColor: "rgba(255,255,255,0.8)",
               justifyContent: "space-between",
             }}
           >
-            <Text>DNWAOIDNWIAO {item}</Text>
+            <Image
+              resizeMode="cover"
+              source={{
+                uri: `${BASE_URL}/images/bersih${index % 2 === 0 ? '1' : '2'}.jpg`,
+              }}
+              style={{
+                width: "100%",
+                height: "100%",
+                borderRadius: 23,
+              }}
+            />
           </View>
         )}
       />

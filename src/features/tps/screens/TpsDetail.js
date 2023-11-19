@@ -1,12 +1,13 @@
 import {
   FlatList,
   Image,
+  Linking,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   ToastAndroid,
   View,
 } from "react-native";
@@ -17,7 +18,6 @@ import { Button } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { useAuth } from "../../../contexts/AuthContext";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { IconButton } from "react-native-paper";
 
 const TpsDetail = ({ route, navigation }) => {
   const [tpsData, setTpsData] = React.useState(null);
@@ -115,11 +115,16 @@ const TpsDetail = ({ route, navigation }) => {
               resizeMode="contain"
               style={{ width: "100%", height: "100%", flex: 1 }}
             />
-            <Text style={{
-              fontSize: 12,
-              fontStyle: "italic",
-              marginBottom: 8,
-            }}>Diupload oleh {selectedImage.photoBy} pada {moment(selectedImage.date).format("DD-MM-YYYY")}</Text>
+            <Text
+              style={{
+                fontSize: 12,
+                fontStyle: "italic",
+                marginBottom: 8,
+              }}
+            >
+              Diupload oleh {selectedImage.photoBy} pada{" "}
+              {moment(selectedImage.date).format("DD-MM-YYYY")}
+            </Text>
             <Pressable
               style={[
                 styles.button,
@@ -136,6 +141,40 @@ const TpsDetail = ({ route, navigation }) => {
         </View>
       </Modal>
       <ScrollView contentContainerStyle={styles.container}>
+        <Pressable
+          style={{
+            position: "absolute",
+            width: 90,
+            height: 30,
+            borderRadius: 4,
+            left: 8,
+            top: 8,
+            flex: 1,
+            zIndex: 100,
+            backgroundColor: "#2FC8B0",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onPress={() => {
+            Linking.openURL("geo:" + tpsData.latitude + "," + tpsData.longitude + "?q=" + tpsData.address)
+            // const scheme = Platform.select({
+            //   ios: "maps://0,0?q=",
+            //   android: "geo:0,0?q=",
+            // });
+            // const latLng = `${tpsData.latitude},${tpsData.longitude}`;
+            // const label = "";
+            // const url = Platform.select({
+            //   ios: `${scheme}${label}@${latLng}`,
+            //   android: `${scheme}${latLng}(${label})`,
+            // });
+
+            // Linking.openURL(url);
+          }}
+        >
+          <Text style={{ fontSize: 12, color: "white", fontWeight: "500" }}>
+            Lihat di Maps
+          </Text>
+        </Pressable>
         <View style={{ height: 250 }}>
           <MapView
             style={{ width: "100%", height: "100%" }}
@@ -156,6 +195,13 @@ const TpsDetail = ({ route, navigation }) => {
               }}
             />
           </MapView>
+        </View>
+        <View style={[styles.createdBy, { paddingHorizontal: 8 }]}>
+          <Text style={styles.createdByText}>
+            Dilaporkan pada tanggal{" "}
+            {moment(tpsData.createdAt).format("DD-MM-YYYY")} oleh{" "}
+            {tpsData.user?.name}
+          </Text>
         </View>
         <View style={{ padding: 8 }}>
           <View style={{ marginBottom: 8, gap: 2 }}>
@@ -186,46 +232,44 @@ const TpsDetail = ({ route, navigation }) => {
           </View>
           <View style={{ width: "100%" }}>
             {tpsData.tpsimages?.length > 0 && (
-              <FlatList
-                ItemSeparatorComponent={() => <View style={{ width: 4 }} />}
-                data={tpsData.tpsimages}
-                horizontal={true}
-                scrollEnabled={true}
-                showsHorizontalScrollIndicator={true}
-                renderItem={({ item }) => (
-                  <Pressable
-                    onPress={() => {
-                      setSelectedImage({
-                        uri: `${BASE_URL}${
-                          `${item.path}`.split("public\\")[1]
-                        }`,
-                        photoBy: item.users.name,
-                        date: item.createdAt,
-                      });
-                      setModalVisible(true);
-                    }}
-                  >
-                    <Image
-                      source={{
-                        uri: `${BASE_URL}${
-                          `${item.path}`.split("public\\")[1]
-                        }`,
+              <View>
+                <Text style={{ fontSize: 17, fontWeight: "500" }}>
+                  Gambar Laporan
+                </Text>
+                <FlatList
+                  ItemSeparatorComponent={() => <View style={{ width: 4 }} />}
+                  data={tpsData.tpsimages}
+                  horizontal={true}
+                  scrollEnabled={true}
+                  showsHorizontalScrollIndicator={true}
+                  renderItem={({ item }) => (
+                    <Pressable
+                      onPress={() => {
+                        setSelectedImage({
+                          uri: `${BASE_URL}${
+                            `${item.path}`.split("public\\")[1]
+                          }`,
+                          photoBy: item.users.name,
+                          date: item.createdAt,
+                        });
+                        setModalVisible(true);
                       }}
-                      key={item.id}
-                      width={200}
-                      height={200}
-                    />
-                  </Pressable>
-                )}
-              />
+                    >
+                      <Image
+                        source={{
+                          uri: `${BASE_URL}${
+                            `${item.path}`.split("public\\")[1]
+                          }`,
+                        }}
+                        key={item.id}
+                        width={200}
+                        height={200}
+                      />
+                    </Pressable>
+                  )}
+                />
+              </View>
             )}
-          </View>
-          <View style={styles.createdBy}>
-            <Text style={styles.createdByText}>
-              Dilaporkan pada tanggal{" "}
-              {moment(tpsData.createdAt).format("DD-MM-YYYY")} oleh{" "}
-              {tpsData.user?.name}
-            </Text>
           </View>
         </View>
         {/* <Pressable
